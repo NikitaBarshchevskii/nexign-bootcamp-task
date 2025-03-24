@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * REST-контроллер для генерации CDR-отчётов в формате CSV.
+ */
 @RestController
 @RequestMapping("/api/report")
 @RequiredArgsConstructor
@@ -17,6 +20,14 @@ public class CDRReportController {
 
     private final CDRReportService reportService;
 
+    /**
+     * Генерирует CSV-отчёт по абоненту за указанный период.
+     *
+     * @param msisdn номер абонента
+     * @param from   начало периода
+     * @param to     конец периода
+     * @return UUID созданного отчёта
+     */
     @PostMapping("/{msisdn}")
     public ResponseEntity<String> generateReport(
             @PathVariable String msisdn,
@@ -27,4 +38,5 @@ public class CDRReportController {
         return ResponseEntity.ok("Report generated. UUID: " + uuid);
     }
 }
+
 

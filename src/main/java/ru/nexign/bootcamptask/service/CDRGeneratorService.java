@@ -11,6 +11,9 @@ import ru.nexign.bootcamptask.repository.SubscriberRepository;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Сервис для генерации тестовых данных: абонентов и CDR-записей.
+ */
 @Service
 @RequiredArgsConstructor
 public class CDRGeneratorService {
@@ -22,12 +25,18 @@ public class CDRGeneratorService {
     private final int subscriberCount = 10;
     private final int callsPerSubscriber = 100;
 
-    public void generate(){
+    /**
+     * Запускает генерацию абонентов и CDR-записей.
+     */
+    public void generate() {
         generateSubscribers();
         generateCDRRecords();
     }
 
-    private void generateSubscribers(){
+    /**
+     * Генерирует случайных абонентов, если их в базе меньше заданного количества.
+     */
+    private void generateSubscribers() {
         if (subscriberRepository.count() >= subscriberCount) return;
 
         for (int i = 0; i < subscriberCount; i++) {
@@ -36,12 +45,15 @@ public class CDRGeneratorService {
         }
     }
 
-    private void generateCDRRecords(){
+    /**
+     * Генерирует случайные CDR-записи между абонентами.
+     */
+    private void generateCDRRecords() {
         List<Subscriber> subs = subscriberRepository.findAll();
         List<CDR> allRecords = new ArrayList<>();
 
         for (Subscriber from : subs) {
-            for (int i = 0; i < callsPerSubscriber; i++){
+            for (int i = 0; i < callsPerSubscriber; i++) {
                 Subscriber to;
                 do {
                     to = subs.get(random.nextInt(subs.size()));
@@ -49,7 +61,6 @@ public class CDRGeneratorService {
 
                 LocalDateTime start = randomDateInLastYear();
                 LocalDateTime end = start.plusSeconds(30 + random.nextInt(300));
-
                 String type = random.nextBoolean() ? "01" : "02";
 
                 allRecords.add(CDR.builder()
@@ -65,8 +76,15 @@ public class CDRGeneratorService {
         cdrRepository.saveAll(allRecords);
     }
 
-    private LocalDateTime randomDateInLastYear(){
+    /**
+     * Возвращает случайную дату в пределах последнего года.
+     *
+     * @return случайная дата и время
+     */
+    private LocalDateTime randomDateInLastYear() {
         LocalDateTime now = LocalDateTime.now();
-        return now.minusDays(random.nextInt(365)).withHour(random.nextInt(24)).withMinute(random.nextInt(60));
+        return now.minusDays(random.nextInt(365))
+                .withHour(random.nextInt(24))
+                .withMinute(random.nextInt(60));
     }
 }

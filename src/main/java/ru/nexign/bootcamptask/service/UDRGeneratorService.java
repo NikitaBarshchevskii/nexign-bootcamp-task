@@ -13,7 +13,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
-
+/**
+ * Сервис для формирования UDR (Usage Detail Record) по абонентам.
+ * Расчитывает суммарную длительность входящих и исходящих звонков
+ * за указанный месяц или за весь период.
+ */
 @Service
 @RequiredArgsConstructor
 public class UDRGeneratorService {
@@ -21,6 +25,13 @@ public class UDRGeneratorService {
     private final CDRRepository cdrRepository;
     private final SubscriberRepository subscriberRepository;
 
+    /**
+     * Генерирует UDR-запись для заданного абонента.
+     *
+     * @param msisdn номер абонента
+     * @param month  месяц (может быть null)
+     * @return объект UDRResponse
+     */
     public UDRResponse generateForMsisdn(String msisdn, YearMonth month) {
         List<CDR> calls;
 
@@ -51,12 +62,24 @@ public class UDRGeneratorService {
                 .build();
     }
 
+    /**
+     * Генерирует UDR-отчёты по всем абонентам за указанный месяц.
+     *
+     * @param month месяц
+     * @return список отчётов
+     */
     public List<UDRResponse> generateAllForMonth(YearMonth month) {
         return subscriberRepository.findAll().stream()
                 .map(subscriber -> generateForMsisdn(subscriber.getMsisdn(), month))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Форматирует длительность (в секундах) в строку формата HH:mm:ss.
+     *
+     * @param totalSeconds длительность в секундах
+     * @return строка в формате HH:mm:ss
+     */
     private String formatDuration(long totalSeconds) {
         long hours = totalSeconds / 3600;
         long minutes = (totalSeconds % 3600) / 60;
