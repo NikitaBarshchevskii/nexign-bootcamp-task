@@ -57,11 +57,6 @@ public class UDRGeneratorService {
                 .collect(Collectors.toList());
     }
 
-    private long getCallDuration(CDR cdr) {
-        Duration duration = Duration.between(cdr.getStartTime(), cdr.getEndTime());
-        return duration.getSeconds();
-    }
-
     private String formatDuration(long totalSeconds) {
         long hours = totalSeconds / 3600;
         long minutes = (totalSeconds % 3600) / 60;

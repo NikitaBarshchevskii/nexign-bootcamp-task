@@ -10,13 +10,13 @@ import java.time.YearMonth;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cdr")
+@RequestMapping("/api/udr")
 @RequiredArgsConstructor
-public class CDRController {
+public class UDRController {
 
     private final UDRGeneratorService udrGeneratorService;
 
-    @GetMapping("/udr/{msisdn}")
+    @GetMapping("/{msisdn}")
     public UDRResponse getUDRByMsisdn(
             @PathVariable String msisdn,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth month
@@ -24,7 +24,7 @@ public class CDRController {
         return udrGeneratorService.generateForMsisdn(msisdn, month);
     }
 
-    @GetMapping("/udr/all")
+    @GetMapping("/all")
     public List<UDRResponse> getUDRsByMonth(
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM") YearMonth month) {
         return udrGeneratorService.generateAllForMonth(month);
